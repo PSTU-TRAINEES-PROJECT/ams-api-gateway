@@ -1,0 +1,16 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: ams-user-service
+    url: http://localhost:7001
+    routes:
+      - name: ams-user-route
+        paths:
+          - /user
+  - name: ams-schedule-service
+    url: http://localhost:8001
+    routes:
+      - name: ams-schedule-route
+        paths:
+          - /schedule
