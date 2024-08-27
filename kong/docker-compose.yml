@@ -1,7 +1,5 @@
-version: '3.9'
-
 services:
-  ats-gateway:
+  ams-gateway:
     build: .
     image: ams-gateway:latest
     container_name: ams-gateway
