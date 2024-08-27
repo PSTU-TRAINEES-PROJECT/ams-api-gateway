@@ -2,15 +2,15 @@ _format_version: "3.0"
 _transform: true
 
 services:
-  - name: ams-user-service
-    url: http://localhost:8000
+  - name: ams-auth-service
+    url: http://auth:8000
     routes:
-      - name: ams-user-route
+      - name: ams-auth-route
         paths:
-          - /user
-  - name: ams-schedule-service
-    url: http://localhost:8000
+          - /auth
+  - name: ams-appointment-service
+    url: http://appointment:8000
     routes:
-      - name: ams-schedule-route
+      - name: ams-appointment-route
         paths:
-          - /schedule
+          - /appointment

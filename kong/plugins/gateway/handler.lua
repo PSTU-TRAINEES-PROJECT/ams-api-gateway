@@ -31,7 +31,7 @@ function AMSGateway:access(config)
     local service = kong.router.get_service()
     -- configure private/public api
     -- and get rid of it
-    if service.name ~= "ams-user" then return end
+    if service.name ~= "ams-auth" then return end
 
     local token = retrieve_token(config.header)
     if not token then
