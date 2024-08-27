@@ -3,13 +3,13 @@ _transform: true
 
 services:
   - name: ams-user-service
-    url: http://localhost:7001
+    url: http://localhost:8000
     routes:
       - name: ams-user-route
         paths:
           - /user
   - name: ams-schedule-service
-    url: http://localhost:7002
+    url: http://localhost:8000
     routes:
       - name: ams-schedule-route
         paths:
