@@ -1,0 +1,16 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: ams-auth-service
+    url: http://auth:8000
+    routes:
+      - name: ams-auth-route
+        paths:
+          - /auth
+  - name: ams-appointment-service
+    url: http://appointment:8000
+    routes:
+      - name: ams-appointment-route
+        paths:
+          - /appointment
