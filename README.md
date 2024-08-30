@@ -14,9 +14,9 @@
     - [Dynamic Routing Plugin](#dynamic-routing-plugin)
   - [Service and Route Configuration](#service-and-route-configuration)
 - [Dockerization](#dockerization)
-  - [Docker Compose Setup](#docker-compose-setup)
 - [Running the Project](#running-the-project)
 - [Conclusion](#conclusion)
+
 
 ## Prerequisites
 
@@ -29,6 +29,27 @@ Before you begin, ensure you have the following installed:
 
 - `kong/`: Contains Kong configuration files and custom plugins.
 - `docker-compose.yml`: Docker Compose file for setting up Kong, PostgreSQL, and other services.
+
+## Project Structure
+```
+AMS-USER-MANAGEMENT/
+├── kong/
+│   ├── config/
+|   |   └──konf.yaml
+│   ├── plugins/
+|   |   ├──gateway/
+|   |      └──────handler.lua
+|   |      └──────schema.lua
+│   ├── docker-compose.yml
+|   |───Dockerfile
+|   |
+│   ├── scripts/
+|   |   └──deploy.sh
+|   |   └──deploy-up.sh
+├── .gitignore
+├── README.md
+```
+
 
 ## Kong Configuration
 
@@ -76,4 +97,5 @@ services:
     routes:
       - name: schedule-route
         paths: ["/schedule"]
+```
 
