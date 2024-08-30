@@ -9,9 +9,6 @@
 - [Prerequisites](#prerequisites)
 - [Project Structure](#project-structure)
 - [Kong Configuration](#kong-configuration)
-  - [Custom Plugins](#custom-plugins)
-    - [Token Verification Plugin](#token-verification-plugin)
-    - [Dynamic Routing Plugin](#dynamic-routing-plugin)
   - [Service and Route Configuration](#service-and-route-configuration)
 - [Dockerization](#dockerization)
 - [Running the Project](#running-the-project)
@@ -53,49 +50,69 @@ AMS-USER-MANAGEMENT/
 
 ## Kong Configuration
 
-### Custom Plugins
-
-Two custom plugins have been added to enhance the functionality of the Kong API Gateway:
-
-#### Token Verification Plugin
-
-This plugin ensures that all incoming requests are authenticated using a valid token. It checks the presence of the token in the request header and validates it against the configured rules.
-
-- **Functionality:**
-  - Extracts the token from the `Authorization` header.
-  - Validates the token against predefined criteria.
-  - Rejects the request if the token is invalid or missing.
-
-#### Dynamic Routing Plugin
-
-The dynamic routing plugin is responsible for directing incoming requests to the appropriate service or route based on custom logic.
-
-- **Functionality:**
-  - Analyzes the incoming request to determine the target service or route.
-  - Dynamically redirects the request to the specified endpoint.
-  - Supports service and route-wise request handling.
-
 ### Service and Route Configuration
 
-Kong allows defining multiple services and routes to manage API requests efficiently. In this project:
+Kong allows the defining of multiple services and routes to manage API requests efficiently. In this project:
 
 - **Services** represent each microservice in your architecture.
 - **Routes** map the incoming requests to the appropriate services.
+- **paths** paths represent the URL for this service
 
 Example configuration:
 
 ```yaml
-services:
-  - name: user-service
-    url: http://user-service:7001
-    routes:
-      - name: user-route
-        paths: ["/user"]
+_format_version: "3.0"
+_transform: true
 
-  - name: schedule-service
-    url: http://schedule-service:7002
+services:
+  - name: ams-auth-service
+    url: http://auth:8000
     routes:
-      - name: schedule-route
-        paths: ["/schedule"]
+      - name: ams-auth-route
+        paths:
+          - /auth
+  - name: ams-appointment-service
+    url: http://appointment:8000
+    routes:
+      - name: ams-appointment-route
+        paths:
+          - /appointment
 ```
 
+## Dockerization
+```
+services:
+  ams-gateway:
+    build: .
+    image: ams-gateway:latest
+    container_name: ams-gateway
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: "/config/kong.yaml"
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_PROXY_LISTEN_SSL: 0.0.0.0:8443
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_PLUGINS: "ams-gateway"
+    networks:
+      - ams-network
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8443:8443"
+      - "8444:8444"
+
+networks:
+  ams-network:
+    name: ams-network
+    driver: bridge
+
+```
+
+## Running the Project
+Ensure all other services are running in the same network. Then run the command
+```
+docker compose up --build
+```
+
+## Conclusion
+In the gateway folder you can add multiple files and customize your routing,adding security.
