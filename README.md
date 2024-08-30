@@ -115,4 +115,4 @@ docker compose up --build
 ```
 
 ## Conclusion
-In the gateway folder you can add multiple files and customize your routing,adding security.
+In the gateway folder, you can add multiple files and customize your routing, adding security.
