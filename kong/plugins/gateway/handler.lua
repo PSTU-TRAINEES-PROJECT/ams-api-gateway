@@ -1,4 +1,4 @@
-local ATSGateway = {
+local AMSGateway = {
     PRIORITY = 1000,
     VERSION = "0.0.1"
 }
@@ -41,7 +41,7 @@ local function validate_token(token)
 
 end
 
-function ATSGateway:access(config)
+function AMSGateway:access(config)
     kong.log.inspect(config)
     local request_path = kong.request.get_path()
 
@@ -58,4 +58,4 @@ function ATSGateway:access(config)
     kong.service.request.set_header("X-Gateway-Says", "OK!")
 end
 
-return ATSGateway
+return AMSGateway
