@@ -14,3 +14,6 @@ services:
       - name: ams-appointment-route
         paths:
           - /appointment
+plugins:
+  - name: ams-gateway
+    service: ams-auth-service

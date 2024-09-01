@@ -1,17 +1,15 @@
-local typedefs = require "kong.db.schema.typedefs"
+local PLUGIN_NAME = "ams-gateway"
 
-return {
-  name = "ams-gateway",
+local schema = {
+  name = PLUGIN_NAME,
   fields = {
-    { consumer = typedefs.no_consumer },
-    { protocols = typedefs.protocols_http },
-    {
-      config = {
+    { config = {
         type = "record",
         fields = {
-            {  header = { type = "string", required = true, default  = "Authorization" }, },
         },
       },
     },
   },
 }
+
+return schema
