@@ -7,7 +7,7 @@ local string_sub = string.sub
 local string_find = string.find
 
 local BEARER_PATTERN = "%s*[Bb]earer%s+"
-local BYPASS_PATHS = { "/auth/api/v1/signup", "/auth/api/v1//login" } -- List of paths to bypass authorization
+local BYPASS_PATHS = { "/auth/api/v1/signup", "/auth/api/v1/login" } -- List of paths to bypass authorization
 
 local function is_bypass_path(path)
     for _, bypass_path in ipairs(BYPASS_PATHS) do
