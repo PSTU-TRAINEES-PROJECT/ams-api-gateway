@@ -83,7 +83,7 @@ services:
           - /appointment
 ```
 
-## Plugins
+### Plugins
 The provided ```handler.lua``` represent a custom plugin for the Kong API Gateway named "ams-gateway." The plugin is designed to handle bearer token authentication for incoming requests while allowing certain paths, like signup and login, to bypass this authorization check. When a request is received, the plugin first checks if the request path matches any of the defined bypass paths. If so, it logs the action and permits the request to proceed without further checks.
 Otherwise, it retrieves the bearer token from the specified header, which defaults to "Authorization." If the token is missing or improperly formatted, the plugin responds with a 401 Unauthorized status, effectively denying access.
 
