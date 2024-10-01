@@ -8,12 +8,22 @@ services:
       - name: ams-auth-route
         paths:
           - /auth
+    plugins:
+      - name: auth-rate-limit
+        config:
+          limit: 100
+          period: 3600
+
   - name: ams-user-org-service
     url: http://user-org:8000
     routes:
       - name: ams-user-org-route
         paths:
           - /user-org
+    plugins:
+      - name: context-setter
+        config:
+          required_permission: "view"
 
   - name: ams-appointment-service
     url: http://appointment:8000
@@ -21,6 +31,7 @@ services:
       - name: ams-appointment-route
         paths:
           - /appointment
-plugins:
-  - name: ams-gateway
-    service: ams-auth-service
+    plugins:
+      - name: context-setter
+        config:
+          required_permission: "book"
