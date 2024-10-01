@@ -8,6 +8,13 @@ services:
       - name: ams-auth-route
         paths:
           - /auth
+  - name: ams-user-org-service
+    url: http://user-org:8000
+    routes:
+      - name: ams-user-org-route
+        paths:
+          - /user-org
+
   - name: ams-appointment-service
     url: http://appointment:8000
     routes:
