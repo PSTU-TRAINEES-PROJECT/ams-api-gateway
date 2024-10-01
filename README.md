@@ -10,10 +10,14 @@
 - [Project Structure](#project-structure)
 - [Kong Configuration](#kong-configuration)
   - [Service and Route Configuration](#service-and-route-configuration)
+  - [Plugins - handler & schema](#plugins)
 - [Dockerization](#dockerization)
 - [Running the Project](#running-the-project)
 - [Conclusion](#conclusion)
 
+## Additional features
+- [JWT Authentication](#authentication)
+- [Rate Limit](#rate-limit-implementation)
 
 ## Prerequisites
 
@@ -79,6 +83,13 @@ services:
           - /appointment
 ```
 
+### Plugins
+The provided ```handler.lua``` represent a custom plugin for the Kong API Gateway named "ams-gateway." The plugin is designed to handle bearer token authentication for incoming requests while allowing certain paths, like signup and login, to bypass this authorization check. When a request is received, the plugin first checks if the request path matches any of the defined bypass paths. If so, it logs the action and permits the request to proceed without further checks.
+Otherwise, it retrieves the bearer token from the specified header, which defaults to "Authorization." If the token is missing or improperly formatted, the plugin responds with a 401 Unauthorized status, effectively denying access.
+
+Additionally, the plugin includes a configuration ```schema.lua``` that allows administrators to set the required header for token retrieval. This schema ensures that the plugin can be easily integrated into various setups by enabling the specification of the desired header name through the Kong Admin API. 
+While the validate_token function is defined, its implementation is currently empty, suggesting that additional logic can be incorporated later for validating the token against an authentication service or database. Overall, the "ams-gateway" plugin provides a streamlined mechanism for token-based authentication, enhancing security for specific API endpoints in the Kong ecosystem.
+
 ## Dockerization
 ```
 services:
@@ -114,5 +125,11 @@ Ensure all other services are running in the same network. Then run the command
 docker compose up --build
 ```
 
+## Authentication
+to be continued.........
+
+## Rate limit implementation
+to be continued........
+
 ## Conclusion
-In the gateway folder, you can add multiple files and customize your routing, adding security.
+to be continued........
