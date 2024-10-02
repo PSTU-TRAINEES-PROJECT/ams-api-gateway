@@ -3,6 +3,8 @@ services:
     build: .
     image: ams-gateway:latest
     container_name: ams-gateway
+    restart: always
+    tty: true
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: "/config/kong.yaml"
