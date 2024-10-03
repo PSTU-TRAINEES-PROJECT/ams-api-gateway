@@ -46,7 +46,7 @@ function ContextSetter:access(config)
     local status, payload = pcall(cjson.decode, res.body)
 
     if not status then
-        kong.log.err("Failed to decode JSON: ", payload)  -- payload contains the error message
+        kong.log.err("Failed to decode JSON: ", payload)
         return kong.response.exit(500, { message = "Invalid JSON response" })
     end
 
