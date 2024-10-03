@@ -11,8 +11,8 @@ services:
     plugins:
       - name: auth-rate-limit
         config:
-          limit: 100
-          period: 3600
+          limit: 10
+          period: 1800
 
   - name: ams-user-org-service
     url: http://user-org:8000
