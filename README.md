@@ -2,7 +2,7 @@
 
 ## Overview
 
-`ams-api-gateway` is a project designed to manage and secure APIs through the implementation of **Kong API Gateway**. The project includes custom plugins for token verification and dynamic routing of requests on a service and route basis. The entire setup is Dockerized for ease of deployment and scalability.
+`ams-api-gateway` is a project designed to manage and secure APIs through the implementation of **Kong API Gateway**. The project includes custom plugins for  simple rate limits by IP address, authentication, authorization, and dynamic routing of requests on a service and route basis. The entire setup is Dockerized for ease of deployment and scalability.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@
 - [Conclusion](#conclusion)
 
 ## Additional features
-- [JWT Authentication](#authentication)
+- [Authentication and Context Setter](#authentication-and-context-setter)
 - [Rate Limit](#rate-limit-implementation)
 
 ## Prerequisites
@@ -38,7 +38,10 @@ AMS-USER-MANAGEMENT/
 │   ├── config/
 |   |   └──konf.yaml
 │   ├── plugins/
-|   |   ├──gateway/
+|   |   ├──auth-rate-limit/
+|   |      └──────handler.lua
+|   |      └──────schema.lua
+|   |   ├──context-setter/
 |   |      └──────handler.lua
 |   |      └──────schema.lua
 │   ├── docker-compose.yml
@@ -75,20 +78,30 @@ services:
       - name: ams-auth-route
         paths:
           - /auth
-  - name: ams-appointment-service
-    url: http://appointment:8000
+    plugins:
+      - name: auth-rate-limit
+        config:
+          limit: 10
+          period: 1800
+
+  - name: ams-user-org-service
+    url: http://user-org:8000
     routes:
-      - name: ams-appointment-route
+      - name: ams-user-org-route
         paths:
-          - /appointment
+          - /user-org
+    plugins:
+      - name: context-setter
+        config:
+          required_permission: "any permissions you want to set"
+
 ```
 
 ### Plugins
-The provided ```handler.lua``` represent a custom plugin for the Kong API Gateway named "ams-gateway." The plugin is designed to handle bearer token authentication for incoming requests while allowing certain paths, like signup and login, to bypass this authorization check. When a request is received, the plugin first checks if the request path matches any of the defined bypass paths. If so, it logs the action and permits the request to proceed without further checks.
-Otherwise, it retrieves the bearer token from the specified header, which defaults to "Authorization." If the token is missing or improperly formatted, the plugin responds with a 401 Unauthorized status, effectively denying access.
+In a microservices architecture, ```handler.lua``` serves as the core of the service logic, defining how requests are processed and responses are generated. It acts as the main entry point for incoming API calls, encapsulating business rules and orchestrating interactions with other services or databases. By maintaining a clear separation of concerns, handler.lua allows developers to implement complex functionalities while ensuring that the codebase remains modular and maintainable.
 
-Additionally, the plugin includes a configuration ```schema.lua``` that allows administrators to set the required header for token retrieval. This schema ensures that the plugin can be easily integrated into various setups by enabling the specification of the desired header name through the Kong Admin API. 
-While the validate_token function is defined, its implementation is currently empty, suggesting that additional logic can be incorporated later for validating the token against an authentication service or database. Overall, the "ams-gateway" plugin provides a streamlined mechanism for token-based authentication, enhancing security for specific API endpoints in the Kong ecosystem.
+On the other hand, schema.lua plays a crucial role in defining the data structure and validation rules for the service. It establishes the expected input and output formats, ensuring that data is consistent and adheres to specified criteria. This layer of validation not only enhances data integrity but also simplifies debugging and testing. Together, handler.lua and schema.lua form a robust foundation for building scalable and reliable microservices, facilitating seamless integration and collaboration within a distributed architecture.
+
 
 ## Dockerization
 ```
@@ -97,13 +110,15 @@ services:
     build: .
     image: ams-gateway:latest
     container_name: ams-gateway
+    restart: always
+    tty: true
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: "/config/kong.yaml"
       KONG_PROXY_LISTEN: 0.0.0.0:8000
       KONG_PROXY_LISTEN_SSL: 0.0.0.0:8443
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
-      KONG_PLUGINS: "ams-gateway"
+      KONG_PLUGINS: "auth-rate-limit,context-setter"
     networks:
       - ams-network
     ports:
@@ -125,11 +140,17 @@ Ensure all other services are running in the same network. Then run the command
 docker compose up --build
 ```
 
-## Authentication
-to be continued.........
+## Authentication and Context Setter
+The ContextSetter plugin is responsible for validating authorization tokens in a Kong-based microservices architecture. Upon receiving a request, the plugin first checks for the presence of an Authorization header. If the token is missing or invalid, it responds with a 401 Unauthorized status. The plugin then constructs a request to an external authentication service to validate the token, encoding necessary parameters and logging the request URI for debugging purposes.
+
+Once the plugin receives a response from the authentication service, it checks the HTTP status code. If the validation fails (non-200 status), it logs the error and returns an appropriate response to the client. If successful, the plugin decodes the JSON response to extract the user ID and sets it as a header for subsequent requests. This functionality ensures that only authenticated users can access protected resources while passing relevant user context through the microservice chain, enhancing security and facilitating user-specific operations.
 
 ## Rate limit implementation
-to be continued........
+The AuthRateLimit plugin is designed to implement rate limiting for incoming requests in a Kong-based microservices architecture. It tracks the number of requests made by each client IP address, using a simple in-memory store to maintain request counts and timestamps. Upon each incoming request, the plugin retrieves the client's IP and checks how many requests have been made within a defined time period.
+
+If the request count exceeds the specified limit, the plugin responds with a 429 Too Many Requests status, notifying the client that the rate limit has been exceeded and prompting them to try again later. This mechanism not only helps protect the service from abuse and brute-force attacks but also ensures a fair usage policy among users, thereby enhancing the overall stability and reliability of the microservice.
 
 ## Conclusion
+It's the basic microservice setup for rate limit and how authentication and authorization could be done to a microservice way.
+
 to be continued........
